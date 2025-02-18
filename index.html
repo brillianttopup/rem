@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+        }
+
+        #resultImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Background Remover</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="removeBgBtn">Remove Background</button>
+        <div id="resultContainer">
+            <img id="resultImage" src="" alt="Result Image">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('removeBgBtn').addEventListener('click', function() {
+            const imageInput = document.getElementById('imageInput');
+            const resultImage = document.getElementById('resultImage');
+
+            if (imageInput.files && imageInput.files[0]) {
+                const formData = new FormData();
+                formData.append('image_file', imageInput.files[0]);
+
+                // bgremover API endpoint
+                const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+                const apiUrl = 'https://api.bgremover.com/remove'; // Replace with the actual API URL
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
+                    body: formData
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    resultImage.src = imageUrl;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the background.');
+                });
+            } else {
+                alert('Please select an image first.');
+            }
+        });
+    </script>
+</body>
+</html>
